@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mini Love Game</title>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Poppins&display=swap" rel="stylesheet" />
+  <style>
+    /* Reset & base */
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #ffe6f0, #ffd1e0);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+      color: #660033;
+      position: relative;
+      padding: 20px;
+    }
+
+    h1, h2 {
+      font-family: 'Dancing Script', cursive;
+      color: #cc3366;
+      margin-bottom: 15px;
+      text-shadow: 1px 1px 4px #f9c4d2;
+    }
+
+    p {
+      font-size: 1.1rem;
+      line-height: 1.5;
+      max-width: 440px;
+      margin: 0 auto 20px auto;
+      color: #7a1f44;
+    }
+
+    .screen {
+      display: none;
+      text-align: center;
+      max-width: 500px;
+      animation: fadeIn 0.8s ease forwards;
+      padding: 0 10px;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    button {
+      padding: 12px 28px;
+      background: linear-gradient(45deg, #ff77a9, #ff3d6e);
+      border: none;
+      border-radius: 30px;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 6px 14px rgba(255, 61, 110, 0.6);
+      margin: 10px 8px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      user-select: none;
+    }
+    button:hover {
+      transform: scale(1.07);
+      box-shadow: 0 10px 22px rgba(255, 61, 110, 0.85);
+    }
+    button:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px #ff88b3;
+    }
+
+    /* Heart styles */
+    .heart {
+      width: 35px;
+      height: 35px;
+      background: url('https://cdn-icons-png.flaticon.com/512/833/833472.png') no-repeat center/contain;
+      position: fixed;
+      cursor: pointer;
+      animation: fall 5s linear forwards;
+      user-select: none;
+      z-index: 1000;
+      filter: drop-shadow(0 0 3px #ff4d94);
+    }
+
+    @keyframes fall {
+      0% { top: -50px; opacity: 1; }
+      90% { opacity: 1; }
+      100% { top: 110vh; opacity: 0; }
+    }
+
+    /* Confetti */
+    .confetti {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      animation-name: confettiFall;
+      animation-timing-function: linear;
+      animation-iteration-count: 1;
+      z-index: 999;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    @keyframes confettiFall {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Percakapan -->
+  <div id="page-0" class="screen active">
+    <h1>Haloo Tiaraa, good morning ☀️</h1>
+    <button onclick="nextPage()">Next</button>
+  </div>
+
+  <div id="page-1" class="screen">
+    <h1>Aku ada kejutan nih, klik next ya 🎁</h1>
+    <button onclick="prevPage()">Previous</button>
+    <button onclick="nextPage()">Next</button>
+  </div>
+
+  <div id="page-2" class="screen">
+    <h1>Kamu lagi ngapain?</h1>
+    <button onclick="prevPage()">Previous</button>
+    <button onclick="nextPage()">Next</button>
+  </div>
+
+  <div id="page-3" class="screen">
+    <h1>Belum mandi yaa?? hehe 😆</h1>
+    <button onclick="prevPage()">Previous</button>
+    <button onclick="nextPage()">Next</button>
+  </div>
+
+  <div id="page-4" class="screen">
+    <h1>Mandi dulu sana, haha, canda sayang 😘</h1>
+    <button onclick="prevPage()">Previous</button>
+    <button onclick="nextPage()">Next</button>
+  </div>
+
+  <div id="page-5" class="screen">
+    <h1>Okey here we go 🚀</h1>
+    <button onclick="prevPage()">Previous</button>
+    <button onclick="nextPage()">Next</button>
+  </div>
+
+  <!-- Puzzle cinta -->
+  <div id="puzzle-screen" class="screen">
+    <h2>🧩 Puzzle 🧩</h2>
+    <p>"Lagu apa yang pertama kali aku nyanyikan untuk kamu?" ❤️</p>
+    <div>
+      <button onclick="checkAnswer('a')">a) bruno mars-when i was your man</button>
+      <button onclick="checkAnswer('b')">b) sleeping trough my finger</button>
+      <button onclick="checkAnswer('c')">c) rex orange county-happiness</button>
+      <button onclick="checkAnswer('d')">d) the chainsmokers-all we know</button>
+    </div>
+    <p id="puzzle-feedback" style="margin-top: 20px; font-weight: 600; min-height: 48px;"></p>
+  </div>
+
+  <!-- Layar awal game -->
+  <div id="start-screen" class="screen">
+    <h1>Hai kamu 😊</h1>
+    <p>Aku punya sesuatu yang spesial buat kamu. Tapi main game kecil dulu yuk~</p>
+    <button onclick="startGame()">Mulai Game</button>
+  </div>
+
+  <!-- Game -->
+  <div id="game-screen" class="screen">
+    <h2>🎯 Tangkap 10 hati untuk membuka pesannya!</h2>
+    <p>Hati yang tertangkap: <span id="score">0</span>/10</p>
+  </div>
+
+  <!-- Pesan cinta -->
+  <div id="love-message" class="screen">
+    <h1>💖 For You 💖</h1>
+    <p>
+      Thank you for being in my life. You make my days brighter, more colorful, and full of smiles. I just want to say... I really like you, and I hope we can always stay this close. 💌
+    </p>
+    <button onclick="showFinalSurprise()">Klik untuk lanjut</button>
+  </div>
+
+  <!-- Kejutan akhir -->
+  <div id="final-surprise" class="screen">
+    <h1 style="font-size: 2em;">Last words haha</h1>
+    <p>
+      Aku bikin ini spesial cuma buat kamu, karena kamu berarti banget buatku.<br>
+      Coba lihat ke luar jendela... bercanda 😄<br><br>
+      Tapi serius deh, kamu itu luar biasa dan aku bersyukur banget bisa kenal kamu.
+    </p>
+  </div>
+
+  <script>
+    let currentPage = 0;
+    let score = 0;
+    let bgMusic;
+
+    function showPage(index) {
+      const pages = document.querySelectorAll('.screen');
+      pages.forEach(page => page.classList.remove('active'));
+
+      if (index === 6) {
+        document.getElementById('puzzle-screen').classList.add('active');
+      } else if (index === 7) {
+        document.getElementById('start-screen').classList.add('active');
+      } else if (index === 8) {
+        document.getElementById('game-screen').classList.add('active');
+      } else {
+        const targetPage = document.getElementById(`page-${index}`);
+        if (targetPage) targetPage.classList.add('active');
+      }
+    }
+
+    function nextPage() {
+      currentPage++;
+      if (currentPage > 5) currentPage = 6; // Puzzle page after page 5
+      showPage(currentPage);
+    }
+
+    function prevPage() {
+      currentPage--;
+      if (currentPage < 0) currentPage = 0;
+      showPage(currentPage);
+    }
+
+    function checkAnswer(answer) {
+      const feedback = document.getElementById('puzzle-feedback');
+      if (answer === 'a') {
+        feedback.innerHTML = `🎉 Benar! Jawabannya adalah <strong>bruno mars-when i was your man</strong>! Kamu pintar banget 😍<br><br>
+          <button onclick="goToStartGame()">Lanjut ke Game ➡️</button>`;
+      } else {
+        feedback.textContent = "iiiiii ga ingat kah?? 😉";
+      }
+    }
+
+    function goToStartGame() {
+      currentPage = 7;
+      showPage(currentPage);
+    }
+
+    function startGame() {
+      score = 0;
+      document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+      document.getElementById('game-screen').classList.add('active');
+      document.getElementById('score').textContent = score;
+
+      spawnHeart();
+
+      // Background music (optional)
+      bgMusic = new Audio("https://ia802709.us.archive.org/26/items/ijustcouldntsaveyoutonight/ijustcouldntsaveyoutonight.mp3");
+      bgMusic.loop = true;
+      bgMusic.volume = 0.4;
+      bgMusic.play().catch(() => {
+        alert("Love Youu Swetiee.");
+      });
+    }
+
+    function spawnHeart() {
+      if (score >= 10) return;
+      const heart = document.createElement('div');
+      heart.className = 'heart';
+      heart.style.left = Math.random() * 90 + 'vw';
+      heart.style.animationDuration = (4 + Math.random() * 3) + 's';
+      heart.onclick = () => {
+        score++;
+        document.getElementById('score').textContent = score;
+        heart.remove();
+        if (score >= 10) {
+          showLove();
+        }
+      };
+      document.body.appendChild(heart);
+
+      // Remove heart after animation ends if not clicked
+      setTimeout(() => {
+        if (document.body.contains(heart)) heart.remove();
+        if (score < 10) spawnHeart();
+      }, 7000);
+
+      if (score < 10) setTimeout(spawnHeart, 1200);
+    }
+
+    function showLove() {
+      document.getElementById('game-screen').classList.remove('active');
+      document.getElementById('love-message').classList.add('active');
+      dropConfetti();
+      if (bgMusic) {
+        bgMusic.pause();
+        bgMusic.currentTime = 0;
+      }
+    }
+
+    function showFinalSurprise() {
+      document.getElementById('love-message').classList.remove('active');
+      document.getElementById('final-surprise').classList.add('active');
+    }
+
+    function dropConfetti() {
+      for (let i = 0; i < 100; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = Math.random() * 100 + 'vw';
+        confetti.style.top = '-10px';
+        confetti.style.backgroundColor = ['#ff69b4', '#ff1493', '#ffc0cb'][Math.floor(Math.random() * 3)];
+        confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        document.body.appendChild(confetti);
+        setTimeout(() => confetti.remove(), 5000);
+      }
+    }
+  </script>
+</body>
+</html>
